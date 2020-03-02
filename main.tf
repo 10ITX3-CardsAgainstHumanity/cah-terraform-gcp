@@ -59,16 +59,3 @@ resource "google_cloud_run_service_iam_policy" "backend-noauth" {
 
   policy_data = "${data.google_iam_policy.backend-noauth.policy_data}"
 }
-
-resource "google_cloud_run_domain_mapping" "backend-domain" {
-  location = "${google_cloud_run_service.backend.location}"
-  name     = "api.cah.maxrs.de"
-
-  metadata {
-    namespace = "${var.project}"
-  }
-
-  spec {
-    route_name = "${google_cloud_run_service.backend.name}"
-  }
-}
