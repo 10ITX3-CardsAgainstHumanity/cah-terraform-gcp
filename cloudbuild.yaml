@@ -1,0 +1,45 @@
+steps:
+
+- id: 'substitutions'
+  name: 'alpine'
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+        apk add sed
+        sed -i "s|_PROJECT_|$PROJECT_ID|g" "terraform.tfvars"
+        sed -i "s|_STATE_BUCKET_|$_STATE_BUCKET|g" "backend.tf"
+
+- id: 'terraform init'
+  name: 'hashicorp/terraform:0.12.21'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+      terraform init
+
+- id: 'terraform validate'
+  name: 'hashicorp/terraform:0.12.21'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+      terraform validate
+
+- id: 'terraform plan'
+  name: 'hashicorp/terraform:0.12.21'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+      terraform plan
+
+- id: 'terraform apply'
+  name: 'hashicorp/terraform:0.12.21'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+      if [ $BRANCH_NAME = "master" ]; then
+        terraform apply -auto-approve
+      fi
